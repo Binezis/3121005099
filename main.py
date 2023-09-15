@@ -2,6 +2,7 @@ import hashlib
 import math
 import sys
 import jieba.analyse
+
 import jieba
 
 
@@ -35,6 +36,18 @@ def getSimhash(keyword):
     return simhash_value
 
 
+def get_similarity(orig_hash, copy_hash):
+    distance = 0
+    if len(orig_hash) != len(copy_hash):
+        distance = -1
+    else:
+        for i in range(len(orig_hash)):
+            if orig_hash[i] != copy_hash[i]:
+                distance += 1
+    similarity = 0.01 * (100 - distance * 100 / 128)
+    return similarity
+
+
 def subWord(text):
     file = open(text, 'r', encoding='utf-8')
     seg_text = file.read()
@@ -60,7 +73,8 @@ def main():
     copy_keyword = subWord(copy_path)
     orig_simhash = getSimhash(orig_keyword)
     copy_simhash = getSimhash(copy_keyword)
-    print(orig_simhash, copy_simhash)
+    similarity = get_similarity(orig_simhash, copy_simhash)
+    print(similarity)
 
 
 if __name__ == '__main__':
