@@ -1,5 +1,6 @@
 import hashlib
 import math
+import re
 import sys
 import jieba.analyse
 import jieba
@@ -50,6 +51,9 @@ def get_similarity(orig_hash, copy_hash):
 def subWord(text):
     file = open(text, 'r', encoding='utf-8')
     seg_text = file.read()
+    # 正则表达式锅炉只剩中文
+    pattern = re.compile(u"[^\u4e00-\u9fa5]")
+    seg_text = pattern.sub("", seg_text)
     words_len = len(list(jieba.lcut(seg_text)))
     top_k = math.ceil(0.08 * words_len)
     # top_k为下面extract_tags()中参数topK的值，因为每篇文章不同，所以没有设置固定的参数值
@@ -75,7 +79,7 @@ def main():
         orig_keyword = subWord(orig_path)
         copy_keyword = subWord(copy_path)
     except FileNotFoundError:
-        print("文件地址错误，找不到文件")
+        print("文件地址错误，找不到文件，")
         return FileNotFoundError
     orig_simhash = getSimhash(orig_keyword)
     copy_simhash = getSimhash(copy_keyword)
