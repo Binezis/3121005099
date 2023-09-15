@@ -48,9 +48,15 @@ def get_similarity(orig_hash, copy_hash):
     return similarity
 
 
-def subWord(text):
-    file = open(text, 'r', encoding='utf-8')
-    seg_text = file.read()
+def subWord(text, loc):
+    try:
+        file = open(text, 'r', encoding='utf-8')
+        seg_text = file.read()
+    except FileNotFoundError:
+        for key in loc:
+            if loc[key] == text:
+                print(key, "文件地址错误，找不到文件")
+        return FileNotFoundError
     # 正则表达式过滤只剩中文
     pattern = re.compile(u"[^\u4e00-\u9fa5]")
     seg_text = pattern.sub("", seg_text)
@@ -62,12 +68,7 @@ def subWord(text):
     return words
 
 
-def main():
-    """
-
-    :return:
-    """
-
+def read_path():
     try:
         orig_path: str = sys.argv[1]
         copy_path: str = sys.argv[2]
@@ -75,15 +76,10 @@ def main():
     except IndexError:
         print('输入格式错误,正确格式为为：python main.py [原文文件] [抄袭版论文的文件] [答案文件]')
         return IndexError
-    try:
-        orig_keyword = subWord(orig_path)
-        copy_keyword = subWord(copy_path)
-    except FileNotFoundError:
-        print("文件地址错误，找不到文件，")
-        return FileNotFoundError
-    orig_simhash = getSimhash(orig_keyword)
-    copy_simhash = getSimhash(copy_keyword)
-    similarity = get_similarity(orig_simhash, copy_simhash)
+    return orig_path, copy_path, result_path
+
+
+def output_result(result_path, similarity):
     try:
         result_file = open(result_path, 'w', encoding='utf-8')
     except (FileNotFoundError, PermissionError):
@@ -92,6 +88,24 @@ def main():
     result_file.write('相似度:' + str(similarity))
     result_file.close()
     print('相似度:%f' % similarity)
+
+
+def main():
+    """
+
+    :return:
+    """
+    orig_path, copy_path, result_path = read_path()
+    loc = locals()
+    orig_keyword = subWord(orig_path, loc)
+    copy_keyword = subWord(copy_path, loc)
+    if orig_keyword != FileNotFoundError and copy_keyword != FileNotFoundError:
+        orig_simhash = getSimhash(orig_keyword)
+        copy_simhash = getSimhash(copy_keyword)
+        similarity = get_similarity(orig_simhash, copy_simhash)
+        output_result(result_path, similarity)
+    else:
+        print("文件地址错误,找不到文件,无法计算相似度")
 
 
 if __name__ == '__main__':
