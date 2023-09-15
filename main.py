@@ -63,18 +63,29 @@ def main():
 
     :return:
     """
-    orig_path = sys.argv[1]
-    copy_path = sys.argv[2]
-    result_path = sys.argv[3]
-    if len(sys.argv) != 4:
-        print('输入格式为：python main.py [原文文件] [抄袭版论文的文件] [答案文件]')
-    orig_keyword = subWord(orig_path)
-    copy_keyword = subWord(copy_path)
+
+    try:
+        orig_path: str = sys.argv[1]
+        copy_path: str = sys.argv[2]
+        result_path: str = sys.argv[3]
+    except IndexError:
+        print('输入格式错误,正确格式为为：python main.py [原文文件] [抄袭版论文的文件] [答案文件]')
+        return IndexError
+    try:
+        orig_keyword = subWord(orig_path)
+        copy_keyword = subWord(copy_path)
+    except FileNotFoundError:
+        print("文件地址错误，找不到文件")
+        return FileNotFoundError
     orig_simhash = getSimhash(orig_keyword)
     copy_simhash = getSimhash(copy_keyword)
     similarity = get_similarity(orig_simhash, copy_simhash)
-    result_file = open(result_path, 'w', encoding='utf-8')
-    result_file.write('相似度:'+str(similarity))
+    try:
+        result_file = open(result_path, 'w', encoding='utf-8')
+    except (FileNotFoundError, PermissionError):
+        print('输出文件路径错误')
+        return FileNotFoundError, PermissionError
+    result_file.write('相似度:' + str(similarity))
     result_file.close()
     print('相似度:%f' % similarity)
 
