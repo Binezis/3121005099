@@ -70,9 +70,9 @@ def subWord(text, loc):
 
 def read_path():
     try:
-        orig_path: str = sys.argv[1]
-        copy_path: str = sys.argv[2]
-        result_path: str = sys.argv[3]
+        orig_path = sys.argv[1]
+        copy_path = sys.argv[2]
+        result_path = sys.argv[3]
     except IndexError:
         print('输入格式错误,正确格式为为：python main.py [原文文件] [抄袭版论文的文件] [答案文件]')
         return IndexError
@@ -95,7 +95,10 @@ def main():
 
     :return:
     """
-    orig_path, copy_path, result_path = read_path()
+    try:
+        orig_path, copy_path, result_path = read_path()
+    except TypeError:
+        return TypeError
     loc = locals()
     orig_keyword = subWord(orig_path, loc)
     copy_keyword = subWord(copy_path, loc)
