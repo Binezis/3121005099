@@ -90,6 +90,19 @@ def output_result(result_path, similarity):
     print('相似度:%f' % similarity)
 
 
+def process(orig_path, copy_path, result_path, loc):
+    print(loc)
+    orig_keyword = subWord(orig_path, loc)
+    copy_keyword = subWord(copy_path, loc)
+    if orig_keyword != FileNotFoundError and copy_keyword != FileNotFoundError:
+        orig_simhash = getSimhash(orig_keyword)
+        copy_simhash = getSimhash(copy_keyword)
+        similarity = get_similarity(orig_simhash, copy_simhash)
+        output_result(result_path, similarity)
+    else:
+        print("文件地址错误,找不到文件,无法计算相似度")
+
+
 def main():
     """
 
@@ -100,15 +113,7 @@ def main():
     except TypeError:
         return TypeError
     loc = locals()
-    orig_keyword = subWord(orig_path, loc)
-    copy_keyword = subWord(copy_path, loc)
-    if orig_keyword != FileNotFoundError and copy_keyword != FileNotFoundError:
-        orig_simhash = getSimhash(orig_keyword)
-        copy_simhash = getSimhash(copy_keyword)
-        similarity = get_similarity(orig_simhash, copy_simhash)
-        output_result(result_path, similarity)
-    else:
-        print("文件地址错误,找不到文件,无法计算相似度")
+    process(orig_path, copy_path, result_path, loc)
 
 
 if __name__ == '__main__':
