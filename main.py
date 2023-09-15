@@ -51,7 +51,7 @@ def get_similarity(orig_hash, copy_hash):
 def subWord(text):
     file = open(text, 'r', encoding='utf-8')
     seg_text = file.read()
-    # 正则表达式过滤只剩中文
+    # 正则表达式锅炉只剩中文
     pattern = re.compile(u"[^\u4e00-\u9fa5]")
     seg_text = pattern.sub("", seg_text)
     words_len = len(list(jieba.lcut(seg_text)))
