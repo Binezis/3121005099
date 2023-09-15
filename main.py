@@ -2,7 +2,6 @@ import hashlib
 import math
 import sys
 import jieba.analyse
-
 import jieba
 
 
@@ -74,7 +73,10 @@ def main():
     orig_simhash = getSimhash(orig_keyword)
     copy_simhash = getSimhash(copy_keyword)
     similarity = get_similarity(orig_simhash, copy_simhash)
-    print(similarity)
+    result_file = open(result_path, 'w', encoding='utf-8')
+    result_file.write('相似度:'+str(similarity))
+    result_file.close()
+    print('相似度:%f' % similarity)
 
 
 if __name__ == '__main__':
