@@ -7,6 +7,11 @@ import jieba
 
 
 def getSimhash(keyword):
+    """
+    根据分词后的关键词计算simhash值
+    :param keyword: 分词后的关键词
+    :return: simhash值
+    """
     vector = [0] * 128
     i = 0
     size = len(keyword)
@@ -37,6 +42,12 @@ def getSimhash(keyword):
 
 
 def get_similarity(orig_hash, copy_hash):
+    """
+    根据simhash值求出相似度
+    :param orig_hash: 论文原文的文件的simhash值
+    :param copy_hash: 抄袭版论文的文件的simhash值
+    :return: 相似度
+    """
     distance = 0
     if len(orig_hash) != len(copy_hash):
         distance = -1
@@ -49,6 +60,12 @@ def get_similarity(orig_hash, copy_hash):
 
 
 def subWord(text, loc):
+    """
+    将文本进行分词
+    :param text: 文本的绝对路径
+    :param loc: 保存路径参数名
+    :return: 分词结果
+    """
     try:
         file = open(text, 'r', encoding='utf-8')
         seg_text = file.read()
@@ -69,6 +86,10 @@ def subWord(text, loc):
 
 
 def read_path():
+    """
+    从命令行读取路径
+    :return: 返回相应路径
+    """
     try:
         orig_path = sys.argv[1]
         copy_path = sys.argv[2]
@@ -80,6 +101,12 @@ def read_path():
 
 
 def output_result(result_path, similarity):
+    """
+    将重复率输出在答案文件
+    :param result_path: 输出的答案文件的绝对路径
+    :param similarity: 重复率
+    :return: None
+    """
     try:
         result_file = open(result_path, 'w', encoding='utf-8')
     except (FileNotFoundError, PermissionError):
@@ -91,7 +118,14 @@ def output_result(result_path, similarity):
 
 
 def process(orig_path, copy_path, result_path, loc):
-    print(loc)
+    """
+    查重过程，调用各个函数
+    :param orig_path: 论文原文的文件的绝对路径
+    :param copy_path: 抄袭版论文的文件的绝对路径
+    :param result_path: 输出的答案文件的绝对路径
+    :param loc: 保存路径参数名
+    :return: None
+    """
     orig_keyword = subWord(orig_path, loc)
     copy_keyword = subWord(copy_path, loc)
     if orig_keyword != FileNotFoundError and copy_keyword != FileNotFoundError:
@@ -105,8 +139,8 @@ def process(orig_path, copy_path, result_path, loc):
 
 def main():
     """
-
-    :return:
+    主函数
+    :return: None
     """
     try:
         orig_path, copy_path, result_path = read_path()
