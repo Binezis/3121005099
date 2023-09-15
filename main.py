@@ -1,8 +1,38 @@
+import hashlib
 import math
 import sys
 import jieba.analyse
-
 import jieba
+
+
+def getSimhash(keyword):
+    vector = [0] * 128
+    i = 0
+    size = len(keyword)
+    for word in keyword:
+        # 利用MD5获得字符串的hash值
+        md5 = hashlib.md5()
+        md5.update(word.encode("utf-8"))
+        hash_value = bin(int(md5.hexdigest(), 16))[2:]
+        if len(hash_value) < 128:  # hash值少于128位，需在低位以0补齐
+            dif = 128 - len(hash_value)
+            for d in range(dif):
+                hash_value += '0'
+        # 加权 合并
+        for j in range(len(vector)):  # 加权：权重由词频决定，从高到低分别是10 -> 0
+            if hash_value[j] == '1':
+                vector[j] += (10 - (i / (size / 10)))
+            else:
+                vector[j] -= (10 - (i / (size / 10)))
+        i += 1
+    # 降维
+    simhash_value = ''
+    for x in range(len(vector)):
+        if vector[x] >= 0:  # 对特征向量的每一位进行遍历，大于0置1，小于0置0
+            simhash_value += '1'
+        else:
+            simhash_value += '0'
+    return simhash_value
 
 
 def subWord(text):
@@ -28,6 +58,9 @@ def main():
         print('输入格式为：python main.py [原文文件] [抄袭版论文的文件] [答案文件]')
     orig_keyword = subWord(orig_path)
     copy_keyword = subWord(copy_path)
+    orig_simhash = getSimhash(orig_keyword)
+    copy_simhash = getSimhash(copy_keyword)
+    print(orig_simhash, copy_simhash)
 
 
 if __name__ == '__main__':
