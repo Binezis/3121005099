@@ -112,9 +112,9 @@ def output_result(result_path, similarity):
     except (FileNotFoundError, PermissionError):
         print('输出文件路径错误')
         return FileNotFoundError, PermissionError
-    result_file.write('相似度:' + str(similarity))
+    result_file.write('相似度:' + str("%.2f%%" % (similarity * 100)))
     result_file.close()
-    print('相似度:%f' % similarity)
+    print('相似度:', ("%.2f%%" % (similarity * 100)))
 
 
 def process(orig_path, copy_path, result_path, loc):
