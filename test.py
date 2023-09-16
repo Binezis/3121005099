@@ -1,4 +1,5 @@
 import unittest
+from unittest import mock
 
 from main import *
 
@@ -9,13 +10,6 @@ class MyTestCase(unittest.TestCase):
 
     def test_read_path_none(self):
         self.assertEqual(read_path(), IndexError)
-
-    # def test_read_path(self):
-    #     sys.argv[1] = "text/orig.txt"
-    #     sys.argv[2] = "text/orig_0.8_add.txt"
-    #     sys.argv[3] = "text/test_result.txt"
-    #     path = read_path()
-    #     self.assertEqual(type(path), list)
 
     def test_subWord_none(self):
         orig_path = ""
@@ -74,6 +68,11 @@ class MyTestCase(unittest.TestCase):
         result_path = ""
         loc = locals()
         self.assertIsNone(process(orig_path, copy_path, result_path, loc))
+
+    @mock.patch("main.read_path")
+    def test_main(self, mock_send_cmd):
+        mock_send_cmd.return_value = ('text/orig.txt', 'text/orig_0.8_add.txt', 'text/test_result.txt')
+        self.assertEqual(main(), None)
 
 
 if __name__ == '__main__':
